@@ -13,9 +13,8 @@ import { API_URL } from '@/config';
 const Conversation: React.FC = () => {
 
   const router = useParams();
-  const [responseData, setResponseData] = useState(null);
-  const [messages, setMessages] = useState([])
-  const [sessionId, setSessionId] = useLocalStorage('sessionId', null)
+  const [messages, setMessages] = useState<string[{}]>([])
+  const [sessionId, setSessionId] = useLocalStorage('sessionId', "")
   const [conversations, setConversations] = useState([])
 
   console.log(router)
@@ -24,12 +23,14 @@ const Conversation: React.FC = () => {
 
   useEffect(() => {
     
-    if (sessionId == null) {
-      setSessionId(uuid)
+    if (sessionId == "") {
+        if (typeof setSessionId === "function") {
+            setSessionId(uuid)
+        }
       return
     }
 
-    function filterMessages(conversationId, data) {
+    function filterMessages(conversationId : any, data : any) {
         for (const conversation of data) {
             if (conversation.conversation_id === conversationId) {
                 return conversation.messages;
@@ -76,21 +77,6 @@ const Conversation: React.FC = () => {
     getData()
     
   }, [sessionId])
-
-  useEffect(() => {
-    if (responseData) {
-      console.log('responseData changed:', responseData);
-      if (responseData.status == "user"){
-        setMessages([...messages, responseData, {status: 'sending'}])
-      }else if (responseData.status == "assistant"){
-        setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          updatedMessages[updatedMessages.length - 1] = responseData
-          return updatedMessages;
-        });
-      }
-    }
-  }, [responseData]); 
 
   return (
     <div className='relative flex h-full w-full bg-neutral-100 overflow-hidden transition-colors z-0'>
