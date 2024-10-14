@@ -7,6 +7,7 @@ import ChatMessage from '@/components/chat/ChatMessage';
 import useLocalStorage from '@/components/layouts/MouminAI/sessionId';
 import ChatHistory from '@/components/layouts/MouminAI/ChatHistory';
 import { useParams } from 'next/navigation'
+import { API_URL } from '@/config';
 
 
 const Conversation: React.FC = () => {
@@ -23,8 +24,6 @@ const Conversation: React.FC = () => {
 
   useEffect(() => {
     
-    console.log(sessionId)
-
     if (sessionId == null) {
       setSessionId(uuid)
       return
@@ -43,7 +42,7 @@ const Conversation: React.FC = () => {
 
       try {
              
-        const response = await fetch('http://aicld.hmomen.com:8501/conversations', {
+        const response = await fetch(`${API_URL}/conversations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -77,50 +76,6 @@ const Conversation: React.FC = () => {
     getData()
     
   }, [sessionId])
-
-  // const addFeedback = async (itemIndex : Number, score : Number) => {
-
-  //   let item = messages[itemIndex]
-
-  //   try {
-     
-  //     const response = await fetch('http://aicld.hmomen.com:8501/feedback', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ 
-  //         "feedback_value": score,
-  //         "trace_id": item.trace_id
-  //        }),
-  //     });
-
-
-  //     if (!response.ok) {
-  //       throw new Error('Something went wrong');
-  //     }
-
-  //     const data = await response.json();
-
-  //     const updatedMessages = messages.map((message, idx) => {
-  //       if (idx === itemIndex) {
-  //         return { ...message, feedback: score }; // Increase the likes for the clicked message
-  //       }
-  //       return message; // Return the rest of the messages unchanged
-  //     });
-  
-  //     // Update the state with the new array
-  //     setMessages(updatedMessages);
-
-  //     console.log(data)
-  //     // Handle response data here
-  //   } catch (error) {
-     
-  //     console.error('Error:', error);
-  //     // Handle error here
-  //   }
-
-  // }
 
   useEffect(() => {
     if (responseData) {
