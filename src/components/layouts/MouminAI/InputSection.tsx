@@ -66,10 +66,10 @@ const InputSection: React.FC<{ onFormSubmit: (data: any) => void , conversation_
 
   return (
     <div className="mx-auto flex flex-1 gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]">
-    <form className="flex w-full overflow-hidden gap-2 items-center py-1 pr-4 bg-white rounded-xl border border-solid border-neutral-900 border-opacity-10 min-h-[56px] shadow-[0px_0px_80px_rgba(0,0,0,0.08)]"
+    <form id="form" className="flex w-full overflow-hidden gap-2 items-center py-1 pr-4 bg-white rounded-xl border border-solid border-neutral-900 border-opacity-10 min-h-[56px] shadow-[0px_0px_80px_rgba(0,0,0,0.08)]"
     onSubmit={handleSubmit}
     >
-   
+    <input type="submit" id="submit" style={{display: "none"}} />
     <label htmlFor="questionInput" className="sr-only">
       اكتب سؤالك
     </label>
@@ -93,8 +93,10 @@ const InputSection: React.FC<{ onFormSubmit: (data: any) => void , conversation_
 </div>
 ) : (<img
   loading="lazy"
+
   src="https://cdn.builder.io/api/v1/image/assets/TEMP/7875f712ebcf40ea4d75685127d45e343865e87ac3cb37c5c9a42d582043c46f?placeholderIfAbsent=true&apiKey=645ca4b112e14229a2cd3203c4a5d6b3"
   alt=""
+  onClick={() => document.getElementById('submit').click()  } // Trigger form submission
   className="object-contain self-stretch my-auto w-5 aspect-square"
 />)}
     
