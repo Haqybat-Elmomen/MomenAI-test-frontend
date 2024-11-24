@@ -1,5 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { API_URL } from "@/config";
+import { Input } from "rizzui";
 
 // Define the interface for the ref methods
 export interface InputSectionRef {
@@ -137,9 +138,10 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
     <label htmlFor="questionInput" className="sr-only">
       اكتب سؤالك
     </label>
-    <input
+    <Input
       id="questionInput"
       type="text"
+      variant="text"
       value={question}
       onChange={(e) => setQuestion(e.target.value)}
       className="flex-1 shrink self-stretch my-auto text-base font-medium text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none border-none"
