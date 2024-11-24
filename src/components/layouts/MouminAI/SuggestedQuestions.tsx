@@ -7,10 +7,14 @@ interface QuestionProps {
   text: string;
   iconSrc: string;
   bgColor: string;
+  onQuestionClick: (text: string) => void;
 }
 
-const Question: React.FC<QuestionProps> = ({ text, iconSrc, bgColor }) => (
-  <div className="flex gap-2 mt-1 items-center p-2.5 w-full rounded-xl border border-dashed border-neutral-900 border-opacity-10 min-h-[56px] min-w-[144px]">
+const Question: React.FC<QuestionProps> = ({ text, iconSrc, bgColor, onQuestionClick }) => (
+  <div 
+  className="flex gap-2 mt-1 items-center cursor-pointer hover:bg-gray-100 p-2.5 w-full rounded-xl border border-dashed border-neutral-900 border-opacity-10 min-h-[56px] min-w-[144px]"
+  onClick={() => onQuestionClick(text)}
+  >
     <div
       className={`flex gap-2 justify-center items-center self-stretch px-2 my-auto w-9 h-9 rounded-lg ${bgColor} min-h-[36px]`}
     >
@@ -27,7 +31,11 @@ const Question: React.FC<QuestionProps> = ({ text, iconSrc, bgColor }) => (
   </div>
 );
 
-const SuggestedQuestions: React.FC = () => {
+interface SuggestedQuestionsProps {
+  onQuestionSelect: (question: string) => void;
+}
+
+const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ onQuestionSelect }) => {
   const questions = [
     {
       text: "ما هي أصول الدين؟",
@@ -99,6 +107,7 @@ const SuggestedQuestions: React.FC = () => {
               text={q.text}
               iconSrc={q.iconSrc}
               bgColor={q.bgColor}
+              onQuestionClick={onQuestionSelect}
             />
           ))}
         </div>

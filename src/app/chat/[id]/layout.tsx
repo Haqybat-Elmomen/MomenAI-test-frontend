@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import Header from "@/components/layouts/MouminAI/Header";
 import ProfileSection from "../../../components/layouts/MouminAI/ProfileSection";
 import ChatMessage from '@/components/chat/ChatMessage';
 import useLocalStorage from '@/components/layouts/MouminAI/sessionId';
@@ -9,15 +8,12 @@ import ChatHistory from '@/components/layouts/MouminAI/ChatHistory';
 import { useParams } from 'next/navigation'
 import { API_URL } from '@/config';
 
-
 const Conversation: React.FC = () => {
 
   const router = useParams();
   const [messages, setMessages] = useState<string[{}]>([])
   const [sessionId, setSessionId] = useLocalStorage('sessionId', "")
   const [conversations, setConversations] = useState([])
-
-  console.log(router)
 
   let uuid = crypto.randomUUID()
 

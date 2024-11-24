@@ -1,46 +1,42 @@
 import { useState, useEffect } from 'react';
 
-function useLocalStorage(key: string, initialValue: string) {
-  // Initialize state from localStorage (if available)
-  const [storedValue, setStoredValue] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const item = localStorage.getItem(key);
-        return item ? item : initialValue;
-      } catch (error) {
-        console.error('Error accessing localStorage during initialization', error);
-        return initialValue;
+function useLocalStorage(key: string, defaultValue: string) {
+  // Get stored value during initialization
+  const getStoredValue = () => {
+    try {
+      if (typeof window === 'undefined') {
+        return defaultValue;
       }
-    } else {
-      return initialValue;
-    }
-  });
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const item = localStorage.getItem(key);
-        if (item) {
-          setStoredValue(item);
-        }
-      } catch (error) {
-        console.error('Error reading from localStorage', error);
+      
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        return item;
       }
-    }
-  }, [key]);
-
-  const setValue = (value: string) => {
-    setStoredValue(value);
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(key, value);
-      } catch (error) {
-        console.error('Error saving to localStorage', error);
-      }
+      
+      // If no value exists, store the default value
+      window.localStorage.setItem(key, defaultValue);
+      return defaultValue;
+      
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+      return defaultValue;
     }
   };
 
-  return [storedValue, setValue];
+  const [value, setValue] = useState(getStoredValue());
+
+  const setStoredValue = (newValue: string) => {
+    try {
+      // Save to localStorage
+      window.localStorage.setItem(key, newValue);
+      // Save state
+      setValue(newValue);
+    } catch (error) {
+      console.error('Error setting localStorage value:', error);
+    }
+  };
+
+  return [value, setStoredValue] as const;
 }
 
 export default useLocalStorage;

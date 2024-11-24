@@ -12,7 +12,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: rgb(245 245 245);
-    --foreground: #ededed;
+    --foreground: #171717;
   }
 }
 
@@ -23,8 +23,8 @@ html {
 body {
   direction: rtl;
   background-color: rgb(245 245 245);
-  color: var(--foreground);
   background: var(--background);
+  color: var( --foreground);
   font-family: "Rubik", sans-serif;
   font-optical-sizing: auto;
   height: 100%;
@@ -34,4 +34,22 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.message.streaming .content {
+  @apply relative;
+}
+
+.message.streaming .content span {
+  @apply inline-block ml-1 text-neutral-500;
+}
+
+@keyframes cursor-blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-pulse {
+  animation: cursor-blink 1s infinite;
 }
