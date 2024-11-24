@@ -6,9 +6,6 @@
  
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-      appDir: true,
-    },
     transpilePackages: ['@react-aria', '@react-stately', '@adobe/react-spectrum'],
     typescript: {
         ignoreBuildErrors: true,  // Ignore TypeScript errors on build
