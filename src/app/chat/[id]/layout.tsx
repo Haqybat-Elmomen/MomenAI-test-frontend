@@ -7,6 +7,7 @@ import useLocalStorage from '@/components/layouts/MouminAI/sessionId';
 import ChatHistory from '@/components/layouts/MouminAI/ChatHistory';
 import { useParams } from 'next/navigation'
 import { API_URL } from '@/config';
+import { v4 as uuidv4 } from 'uuid';
 
 const Conversation: React.FC = () => {
 
@@ -15,16 +16,19 @@ const Conversation: React.FC = () => {
   const [sessionId, setSessionId] = useLocalStorage('sessionId', "")
   const [conversations, setConversations] = useState([])
 
-  let uuid = crypto.randomUUID()
+  let uuid = uuidv4();
+
+    // Handle sessionId initialization
+    useEffect(() => {
+      if (!sessionId) {
+        setSessionId(uuidv4());
+      }
+  }, []); // Empty dependency array so it only runs once
+  
 
   useEffect(() => {
     
-    if (sessionId == "") {
-        if (typeof setSessionId === "function") {
-            setSessionId(uuid)
-        }
-      return
-    }
+    if (!sessionId) return; // Skip if sessionId is not yet set
 
     function filterMessages(conversationId : any, data : any) {
         for (const conversation of data) {

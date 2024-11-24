@@ -43,7 +43,7 @@ const MouminAI: React.FC = () => {
   const submitComment = async () => {
 
     if (traceCommentText == undefined || traceCommentText == ""){
-      alert('النص مطلوب')
+      setModalState(false)
       return
     }
 
@@ -94,8 +94,6 @@ const MouminAI: React.FC = () => {
     if (!sessionId) return; // Skip if sessionId is not yet set
 
     const getData = async () => {
-
-      console.log(sessionId)
 
       try {
              
