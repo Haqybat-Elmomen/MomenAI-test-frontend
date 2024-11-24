@@ -6,6 +6,9 @@
  
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    experimental: {
+      appDir: true,
+    },
     typescript: {
         ignoreBuildErrors: true,  // Ignore TypeScript errors on build
       },
