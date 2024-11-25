@@ -53,3 +53,8 @@ body {
 .animate-pulse {
   animation: cursor-blink 1s infinite;
 }
+
+.is-focus, .is-hover {
+  outline: none !important;
+  border: none !important;
+}

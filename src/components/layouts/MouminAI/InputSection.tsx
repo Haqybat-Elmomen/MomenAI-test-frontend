@@ -143,6 +143,9 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
       type="text"
       variant="text"
       value={question}
+      maxLength={400}
+      suffix={question.length + `/${400}`}
+      suffixClassName="opacity-70"
       onChange={(e) => setQuestion(e.target.value)}
       className="flex-1 shrink self-stretch my-auto text-base font-medium text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none border-none"
       placeholder="اكتب سؤالك"
