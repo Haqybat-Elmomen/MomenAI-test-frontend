@@ -1,5 +1,6 @@
 import React from "react";
 import Markdown from 'react-markdown'
+import { SyncLoader } from "react-spinners";
 
 interface ChatMessageProps {
   sender: "user" | "assistant" | "sending";
@@ -32,9 +33,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index,
           />
           <div className="flex flex-col flex-1 shrink justify-center basis-0 min-w-[340px]">
             <div className="gap-2 self-start text-base text-right min-h-[32px]">
-              مؤمن AI
+              مؤمن
             </div>
-            <div className="text-lg leading-7 text-right line font-mono">
+            <div className="text-lg leading-loose font-normal text-right line">
               <Markdown>{content}</Markdown>
               {item.isStreaming && (
                 <span className="inline-block ml-1 animate-pulse text-neutral-500">▊</span>
@@ -88,14 +89,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index,
             <div className="gap-2 self-start text-lg text-right min-h-[32px]">
               مؤمن يفكر..
             </div>
-            <div role="status" className="max-w-sm animate-pulse mt-5">
-              <div className="h-2.5 bg-gray-200 rounded-full w-48 mb-4"></div>
-              <div className="h-2 bg-neutral-200 rounded-full max-w-[360px] mb-2.5"></div>
-              <div className="h-2 bg-neutral-200 rounded-full mb-2.5"></div>
-              <div className="h-2 bg-neutral-200 rounded-full max-w-[330px] mb-2.5"></div>
-              <div className="h-2 bg-neutral-200 rounded-full max-w-[300px] mb-2.5"></div>
-              <div className="h-2 bg-neutral-200 rounded-full max-w-[360px]"></div>
-              <span className="sr-only">Loading...</span>
+            <div role="status" className="max-w-sm mt-5">
+            <SyncLoader color="#0B8457" />
             </div>
           </div>
         </div>
