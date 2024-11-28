@@ -22,6 +22,7 @@ import {
 
 const MouminAI: React.FC = () => {
 
+  const [systemHealth, setSystemHealth] = useState<'loading' | 'healthy' | 'overloaded'>('loading');
   const bottomRef = useRef(null);
   // const [responseData, setResponseData] = useState(null);
   const [messages, setMessages] = useState([])
@@ -39,6 +40,31 @@ const MouminAI: React.FC = () => {
     const container = bottomRef.current;
     container.scrollTop = container.scrollHeight;
   };
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        if (!response.ok) {
+          throw new Error('Health check failed');
+        }
+        const data = await response.json();
+        setSystemHealth(data.status);
+      } catch (error) {
+        console.error('Health check error:', error);
+        setSystemHealth('overloaded');
+      }
+    };
+
+    // Initial check
+    checkHealth();
+
+    // Set up periodic health checks every 30 seconds
+    const intervalId = setInterval(checkHealth, 600000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   const submitComment = async () => {
 
@@ -231,6 +257,45 @@ const MouminAI: React.FC = () => {
   //     }
   //   }
   // }, [responseData]); 
+
+
+  if (systemHealth === 'loading') {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-neutral-100">
+        <div className="text-center">
+          <div className="mb-4">
+            <svg className="w-12 h-12 animate-spin text-emerald-700 mx-auto" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+          </div>
+          <div className="text-lg font-medium text-neutral-900">جاري التحقق من جاهزية النظام...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (systemHealth === 'overloaded') {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-neutral-100">
+        <div className="text-center max-w-md px-4">
+          <div className="mb-4 text-red-600">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div className="text-xl font-medium text-neutral-900 mb-2">النظام غير متاح حالياً</div>
+          <div className="text-neutral-600">يرجى المحاولة مرة أخرى لاحقاً. النظام يواجه ضغطاً في الوقت الحالي.</div>
+          <Button
+            className="mt-4"
+            onClick={() => setSystemHealth('loading')}
+          >
+            إعادة المحاولة
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='relative flex h-full w-full bg-neutral-100 overflow-hidden transition-colors z-0'>

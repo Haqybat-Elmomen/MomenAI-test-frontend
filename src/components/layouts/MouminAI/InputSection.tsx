@@ -139,17 +139,22 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
       اكتب سؤالك
     </label>
     <Input
-      id="questionInput"
-      type="text"
-      variant="text"
-      value={question}
-      maxLength={400}
-      suffix={question.length + `/${400}`}
-      suffixClassName="opacity-70"
-      onChange={(e) => setQuestion(e.target.value)}
-      className="flex-1 shrink self-stretch my-auto text-base font-medium text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none border-none"
-      placeholder="اكتب سؤالك"
-    />
+             id="questionInput"
+             type="text"
+             variant="text"
+             value={question}
+             maxLength={400}
+             suffix={question.length + `/${400}`}
+             suffixClassName="opacity-70"
+             onChange={(e) => setQuestion(e.target.value)}
+             className="flex-1 shrink self-stretch my-auto text-base font-medium text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none border-none text-[16px]" // Added text-[16px]
+             style={{
+               fontSize: '16px',
+               transform: 'scale(1)',
+               touchAction: 'manipulation'
+             }}
+             placeholder="اكتب سؤالك"
+           />
 
     <div className="flex gap-2 justify-center items-center self-stretch my-auto w-12 min-h-[48px]">
       {isSending ? (
