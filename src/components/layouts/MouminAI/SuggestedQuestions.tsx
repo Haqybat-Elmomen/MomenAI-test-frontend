@@ -67,7 +67,7 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ onQuestionSelec
         bgColor: "bg-emerald-700 bg-opacity-10",
       },
       {
-        text: "كيف أتعلم تلاوة القرآن الكريم بشكل صحيح؟",
+        text: "اعطني حديث عن الإمام جعفر الصادق (ع)",
         iconSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/1e21215d305e223acb373435511126d8c0c914ed4f5db2b5ea0ef67d0d05b6ed",
         bgColor: "bg-indigo-700 bg-opacity-10",
       },
@@ -85,7 +85,7 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ onQuestionSelec
     // Third group
     [
       {
-        text: "ما هي أحكام الطهارة في الإسلام؟",
+        text: "ما هي المطهرات في الإسلام؟",
         iconSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/ea4d0aa1c81b39b747eaff5e8713c56ca9ffaadcb4fc14866cd9bda53c024eac",
         bgColor: "bg-emerald-700 bg-opacity-10",
       },
@@ -100,7 +100,7 @@ const SuggestedQuestions: React.FC<SuggestedQuestionsProps> = ({ onQuestionSelec
         bgColor: "bg-lime-400 bg-opacity-10",
       },
       {
-        text: "كيف أتعامل مع الوسوسة في العبادة؟",
+        text: "أعطني حديث شريف عن حسن الخلق",
         iconSrc: "https://cdn.builder.io/api/v1/image/assets/TEMP/512a6dc544fcd7d837ab33a4c6fc5547c167ecf0a8ddbcfe968324989f830b74",
         bgColor: "bg-pink-700 bg-opacity-10",
       },
