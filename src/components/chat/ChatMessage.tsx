@@ -1,6 +1,7 @@
 import React from "react";
 import Markdown from 'react-markdown'
 import { SyncLoader } from "react-spinners";
+import remarkGfm from 'remark-gfm'
 
 interface ChatMessageProps {
   sender: "user" | "assistant" | "sending";
@@ -36,7 +37,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index,
               مؤمن
             </div>
             <div className="text-lg leading-loose font-normal text-right line">
-              <Markdown>{content}</Markdown>
+              <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
               {item.isStreaming && (
                 <span className="inline-block ml-1 animate-pulse text-neutral-500">▊</span>
               )}

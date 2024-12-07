@@ -8,6 +8,7 @@ import ChatHistory from '@/components/layouts/MouminAI/ChatHistory';
 import { useParams } from 'next/navigation'
 import { API_URL } from '@/config';
 import { v4 as uuidv4 } from 'uuid';
+import { Drawer } from 'rizzui';
 
 const Conversation: React.FC = () => {
 
@@ -15,6 +16,7 @@ const Conversation: React.FC = () => {
   const [messages, setMessages] = useState<string[{}]>([])
   const [sessionId, setSessionId] = useLocalStorage('sessionId', "")
   const [conversations, setConversations] = useState([])
+  const [drawerState, setDrawerState] = useState(false);
 
   let uuid = uuidv4();
 
@@ -78,17 +80,36 @@ const Conversation: React.FC = () => {
     
   }, [sessionId])
 
+  if (messages.length == 0) {
+    return (  <div className="flex h-screen w-full items-center justify-center bg-neutral-100">
+      <div className="text-center">
+        <div className="mb-4">
+          <svg className="w-12 h-12 animate-spin text-emerald-700 mx-auto" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+        </div>
+        <div className="text-lg font-medium text-neutral-900">جاري التحقق من جاهزية النظام...</div>
+      </div>
+    </div>)
+  } else {
   return (
     <div className='relative flex h-full w-full bg-neutral-100 overflow-hidden transition-colors z-0'>
       
-      <div className="z-[1] bg-neutral-100 flex-shrink-0 overflow-x-hidden bg-neutral-100 border-l max-md:!w-0 hidden md:block fixed top-0 right-0 h-full pt-[56px]" style={{ "width": "260px" }}>
-        <ChatHistory conversations={conversations} />
-      </div>
-
+      <Drawer
+        isOpen={drawerState}
+        onClose={() => setDrawerState(false)}
+        customSize={360}
+      >
+        <div className="z-[1] bg-neutral-100 flex-shrink-0 overflow-x-hidden bg-neutral-100 fixed top-0 right-0 h-full" style={{ "width": "384px" }}>
+          <ChatHistory onCloseBtnClicked={() => setDrawerState(false)} conversations={conversations} />
+        </div>
+      </Drawer>
+     
       <div className='relative flex h-full max-w-full flex-1 flex-col overflow-hidden'>
         
         <div className='draggable sticky top-0 z-10 flex min-h-[56px] items-center justify-center border-transparent bg-token-main-surface-primary pl-0 '>
-          <ProfileSection />
+          <ProfileSection onDrawerIconClicked={() => setDrawerState(true)} />
         </div> 
      
     <main className='relative h-full w-full flex-1 overflow-auto transition-width'>
@@ -97,7 +118,7 @@ const Conversation: React.FC = () => {
 
           {messages.length == 0 ? (
             <>
-              no messages
+              
             </>
           ) : (
               <div className="flex-1 overflow-x-hidden font-medium self-center text-neutral-900 text-opacity-90">
@@ -130,6 +151,8 @@ const Conversation: React.FC = () => {
 </div>
 
   );
+
+}
 };
 
 export default Conversation;

@@ -5,17 +5,35 @@ import React from "react";
 import TimeAgo from 'javascript-time-ago'
 import ar from 'javascript-time-ago/locale/ar'
 import Link from 'next/link'
+import {  ActionIcon } from 'rizzui'
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
 TimeAgo.addDefaultLocale(ar)
 
-const ChatHistory: React.FC<{conversations : any}> = ({conversations}) => {
+const ChatHistory: React.FC<{conversations : any, onCloseBtnClicked : () => void}> = ({conversations, onCloseBtnClicked}) => {
 
 const timeAgo = new TimeAgo('ar')
 
   return (
     <div>
         <div className=" text-neutral-700 z-20">
-            <span className="flex h-9 items-center"><h3 className="pb-2 pt-3 px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all text-token-text-primary">سجل المحادثات</h3></span></div>
+          <div className="-mr-1 flex translate-y-px items-center p-2">
+
+            <div className="ml-px flex h-9 flex-1 items-center leading-none">
+              <h3 className="pb-2 pt-3 px-2 font-semibold text-ellipsis overflow-hidden break-all text-token-text-primary">سجل المحادثات</h3>
+            </div>
+
+            <div>
+                  <ActionIcon
+                    variant="text"
+                    onClick={onCloseBtnClicked}
+                  >
+                    <XMarkIcon className="h-auto w-6" strokeWidth={2.5} />
+                  </ActionIcon>
+              </div>
+
+          </div>
+           
             {conversations.map((conversation, index) => (
                 <div key={`conversation-${index}`}>
                 <Link href={`/chat/${conversation.conversation_id}`} className="block max-w-sm m-1 rounded-lg mt-2  hover:bg-neutral-200 hover:bg-opacity-50">
@@ -24,6 +42,7 @@ const timeAgo = new TimeAgo('ar')
                 </Link>
                 </div> 
                 ))}
+                </div>
     </div>
   );
 };

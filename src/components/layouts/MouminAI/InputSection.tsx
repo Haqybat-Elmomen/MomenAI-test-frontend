@@ -1,6 +1,8 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { API_URL } from "@/config";
 import { Input } from "rizzui";
+import AutoResizingInput from "@/components/AutoSizeInput";
+import TextareaAutosize from 'react-textarea-autosize';
 
 // Define the interface for the ref methods
 export interface InputSectionRef {
@@ -138,20 +140,33 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
     <label htmlFor="questionInput" className="sr-only">
       اكتب سؤالك
     </label>
-    <Input
+    <TextareaAutosize
              id="questionInput"
-             type="text"
-             variant="text"
+             autoComplete="off"
+             autoCorrect="off"
+             autoCapitalize="off"
+             spellCheck="false"
              value={question}
-             maxLength={400}
-             suffix={question.length + `/${400}`}
-             suffixClassName="opacity-70"
+             maxLength={300}
+             onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (e.shiftKey) {
+                  // Allow new line with Shift+Enter
+                  return;
+                } else {
+                  e.preventDefault();
+                  // Add your submit logic here
+                  document.getElementById('submit').click()
+                }
+              }
+            }}
              onChange={(e) => setQuestion(e.target.value)}
-             className="flex-1 shrink self-stretch my-auto text-base font-medium text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none border-none text-[16px]" // Added text-[16px]
+             className="flex-1 shrink self-stretch my-auto text-base font-normal text-right basis-0 text-neutral-900 text-opacity-40 bg-transparent outline-none focus:outline-none focus:ring-0 focus:border-none border-none text-[16px] placeholder:text-neutral-400" // Added text-[16px]
              style={{
                fontSize: '16px',
                transform: 'scale(1)',
-               touchAction: 'manipulation'
+               touchAction: 'manipulation',
+               resize: 'none'  // Add this line
              }}
              placeholder="اكتب سؤالك"
            />

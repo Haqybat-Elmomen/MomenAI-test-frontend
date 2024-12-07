@@ -17,7 +17,8 @@ import {
   Button,
   Text,
   Textarea,
-  Flex
+  Flex,
+  Drawer,
 } from "rizzui";
 
 const MouminAI: React.FC = () => {
@@ -30,6 +31,8 @@ const MouminAI: React.FC = () => {
   const [conversations, setConversations] = useState([])
   const  [conversation_id] = useState(uuidv4());
   const [modalState, setModalState] = useState(false);
+
+  const [drawerState, setDrawerState] = useState(false);
 
   const [currentTraceId, setTraceId] = useState(null)
   const [traceCommentText, setTraceCommentText] = useState(undefined)
@@ -300,14 +303,21 @@ const MouminAI: React.FC = () => {
   return (
     <div className='relative flex h-full w-full bg-neutral-100 overflow-hidden transition-colors z-0'>
       
-      <div className="z-[1] bg-neutral-100 flex-shrink-0 overflow-x-hidden bg-neutral-100 border-l max-md:!w-0 hidden md:block fixed top-0 right-0 h-full pt-[56px]" style={{ "width": "260px" }}>
-        <ChatHistory conversations={conversations} />
-      </div>
+      <Drawer
+        isOpen={drawerState}
+        onClose={() => setDrawerState(false)}
+        customSize={360}
+      >
+        <div className="z-[1] bg-neutral-100 flex-shrink-0 overflow-x-hidden bg-neutral-100 fixed top-0 right-0 h-full" style={{ "width": "384px" }}>
+          <ChatHistory onCloseBtnClicked={() => setDrawerState(false)} conversations={conversations} />
+        </div>
+      </Drawer>
+     
 
       <div className='relative flex h-full max-w-full flex-1 flex-col overflow-hidden'>
         
         <div className='draggable sticky top-0 z-10 flex min-h-[56px] items-center justify-center border-transparent bg-token-main-surface-primary pl-0 '>
-          <ProfileSection />
+          <ProfileSection onDrawerIconClicked={() => setDrawerState(true)} />
         </div> 
      
     <main className='relative h-full w-full flex-1 overflow-auto transition-width'>
