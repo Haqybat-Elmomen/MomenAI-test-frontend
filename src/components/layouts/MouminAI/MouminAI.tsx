@@ -212,8 +212,56 @@ const MouminAI: React.FC = () => {
 
     if (data.status === "user") {
       setMessages([...messages, data, { status: 'sending' }]);
-    } 
-    else if (data.status === "assistant") {
+    } else if (data.status == "action"){
+
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        
+        updatedMessages[updatedMessages.length - 1] = {
+          status: "action",
+          content: data.content,
+          isStreaming: false,
+        };
+        
+        return updatedMessages;
+      });
+
+    } else if (data.status == "error"){
+
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        
+        updatedMessages[updatedMessages.length - 1] = {
+          status: "error",
+          isStreaming: false,
+        };
+        
+        return updatedMessages;
+      });
+
+    } else if (data.status == "stopped"){
+
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        const lastMessage = updatedMessages[updatedMessages.length - 1];
+
+        if (lastMessage.status == "action" || lastMessage.status == "sending") {
+          updatedMessages[updatedMessages.length - 1] = {
+            status: "stopped",
+            isStreaming: false,
+          };
+        } else {
+          updatedMessages[updatedMessages.length - 1] = {
+            status: "assistant",
+            isStreaming: false,
+            content: lastMessage.content,
+          };
+        }
+        
+        return updatedMessages;
+      });
+
+    } else if (data.status === "assistant") {
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
         const lastMessage = updatedMessages[updatedMessages.length - 1];
@@ -332,7 +380,7 @@ const MouminAI: React.FC = () => {
             </>
           ) : (
 
-                  <div ref={bottomRef} className="flex-1 overflow-x-hidden scroll-smooth font-medium self-center text-neutral-900 text-opacity-90">
+                  <div ref={bottomRef} className="flex-1 w-full md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem] overflow-x-hidden scroll-smooth font-medium self-center text-neutral-900 text-opacity-90">
                     <div className='h-full'>
                       {messages.map((message, index) => (
                         <div  key={index}  className='w-full text-token-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-4px]'>

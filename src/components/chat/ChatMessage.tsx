@@ -2,13 +2,25 @@ import React from "react";
 import Markdown from 'react-markdown'
 import { SyncLoader } from "react-spinners";
 import remarkGfm from 'remark-gfm'
+import { Loader } from "rizzui";
+
 
 interface ChatMessageProps {
-  sender: "user" | "assistant" | "sending";
+  sender: "user" | "assistant" | "sending" | "action" | "error" | "stopped";
   content: string;
   item: any;
   index: Number;
   addFeedback?: (itemIndex: Number, score: Number) => void;
+}
+
+const MomenActionToString = (action : string) => {
+  if (action == "retrieve_sources") {
+    return "جاري البحث في المصادر"
+  } else if (action == "thinking") {
+    return "يتم تكوين الإجابة"
+  } else if (action == "analyze") {
+    return "يتم تحليل السؤال"
+  }
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index, addFeedback }) => {
@@ -22,6 +34,76 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index,
         </div>
       </div>
     );
+  } else if (sender == "action") {
+
+    return (
+      <div className="mx-auto flex flex-1 gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]">
+        <div className="flex gap-2 items-start w-full">
+          <img
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c2650ef86336976136e90179de337cbbec42633da15c2064811386351f0291a9?placeholderIfAbsent=true&apiKey=645ca4b112e14229a2cd3203c4a5d6b3"
+            className="object-contain shrink-0 w-8 aspect-square rounded-[1000px]"
+            alt="AI Avatar"
+          />
+          <div className="flex flex-col flex-1 shrink justify-center basis-0 min-w-[340px]">
+            <div className="gap-2 self-start text-lg text-right min-h-[32px]">
+              مؤمن يفكر..
+            </div>
+            <div role="status" className="max-w-sm mt-5">
+              <div className="flex items-center justify-start gap-1 text-sm loading-shimmer">{MomenActionToString(content)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+  }else if (sender == "stopped") {
+
+      return (
+        <div className="mx-auto flex flex-1 gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]">
+          <div className="flex gap-2 items-start w-full">
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/c2650ef86336976136e90179de337cbbec42633da15c2064811386351f0291a9?placeholderIfAbsent=true&apiKey=645ca4b112e14229a2cd3203c4a5d6b3"
+              className="object-contain shrink-0 w-8 aspect-square rounded-[1000px]"
+              alt="AI Avatar"
+            />
+            <div className="flex flex-col flex-1 shrink justify-center basis-0 min-w-[340px]">
+              <div className="gap-2 self-start text-lg text-right min-h-[32px]">
+                مؤمن يفكر..
+              </div>
+              <div role="status" className="max-w-sm mt-5">
+                <div className="flex items-center justify-start gap-1 text-sm">تم إلغاء السؤال</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      
+  } else if (sender == "error") {
+
+    return (
+      <div className="mx-auto flex flex-1 gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]">
+        <div className="flex gap-2 items-start w-full">
+          <img
+            loading="lazy"
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c2650ef86336976136e90179de337cbbec42633da15c2064811386351f0291a9?placeholderIfAbsent=true&apiKey=645ca4b112e14229a2cd3203c4a5d6b3"
+            className="object-contain shrink-0 w-8 aspect-square rounded-[1000px]"
+            alt="AI Avatar"
+          />
+          <div className="flex flex-col flex-1 shrink justify-center basis-0 min-w-[340px]">
+            <div className="gap-2 self-start text-lg text-right min-h-[32px]">
+              مؤمن
+            </div>
+            <div role="status" className="max-w-sm mt-5">
+            حدث خطأ أثناء توليد الإجابة, حاول من جديد
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   } else if (sender === "assistant") {
     return (
       <div className="mx-auto flex flex-1 text-base gap-4 md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]">
@@ -62,14 +144,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, item, index,
                   </svg>
                   إجابة سيئة
                 </a>
-                <span className="inline-flex items-center text-sm font-medium text-black text-opacity-50 ms-5">
+                {/* <span className="inline-flex items-center text-sm font-medium text-black text-opacity-50 ms-5">
                   <svg fill="currentColor" className="w-3.5 h-3.5 me-2.5" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <g>
                       <path d="M256,0C114.842,0,0,114.842,0,256s114.842,256,256,256s256-114.842,256-256S397.158,0,256,0z M374.821,283.546H256 c-15.148,0-27.429-12.283-27.429-27.429V137.295c0-15.148,12.281-27.429,27.429-27.429s27.429,12.281,27.429,27.429v91.394h91.392 c15.148,0,27.429,12.279,27.429,27.429C402.249,271.263,389.968,283.546,374.821,283.546z"></path>
                     </g>
                   </svg>
                   {item.executionTime}
-                </span>
+                </span> */}
               </aside>
             )}
           </div>

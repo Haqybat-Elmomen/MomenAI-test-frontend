@@ -4,6 +4,45 @@ import { Input } from "rizzui";
 import AutoResizingInput from "@/components/AutoSizeInput";
 import TextareaAutosize from 'react-textarea-autosize';
 
+
+const LoadingStopButton = ({ onStop, className = "" }) => {
+  return (
+    <button
+      onClick={onStop}
+      className={`relative w-8 h-8 flex items-center justify-center ${className}`}
+      aria-label="Stop generation"
+    >
+      {/* Outer spinning ring */}
+      <svg 
+        className="absolute w-8 h-8 animate-spin"
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          className="opacity-25"
+          cx="50"
+          cy="50"
+          r="45"
+          stroke="#0B8457"
+          strokeWidth="10"
+          fill="none"
+        />
+        <path
+          className="opacity-75"
+          stroke="#0B8457"
+          strokeWidth="10"
+          strokeLinecap="round"
+          fill="none"
+          d="M 50 5 A 45 45 0 0 1 95 50"
+        />
+      </svg>
+      
+      {/* Inner stop button */}
+      <div className="relative w-3 h-3 bg-[#0B8457] rounded-sm" />
+    </button>
+  );
+};
+
 // Define the interface for the ref methods
 export interface InputSectionRef {
   submitQuestion: (text: string) => Promise<void>;
@@ -20,6 +59,16 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
     const [question, setQuestion] = useState('');
     const [isSending, setSending] = useState(false);
 
+    const [abortController, setAbortController] = useState<AbortController | null>(null);
+
+    const handleStopGeneration = () => {
+      if (abortController) {
+        abortController.abort();
+        setSending(false);
+      }
+    };
+
+    
     // Extract the submission logic into a separate function
     const submitQuestion = async (text: string) => {
       if (isSending || !sessionId || text.trim() === "") {
@@ -27,6 +76,10 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
       }
 
       try {
+
+        const controller = new AbortController();
+        setAbortController(controller);
+
         setSending(true);
         onFormSubmit({
           status: "user",
@@ -48,6 +101,7 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
             sessionId: sessionId, 
             conversationId: conversation_id 
           }),
+          signal: controller.signal // Add this line
         });
 
         if (!response.ok) {
@@ -58,16 +112,17 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
 
-        onFormSubmit({
-          status: "assistant",
-          content: "",
-          isStreaming: true
-        });
+        // onFormSubmit({
+        //   status: "assistant",
+        //   content: "",
+        //   isStreaming: true
+        // });
 
         while (true) {
           const { done, value } = await reader?.read();
           if (done) break;
-
+          
+          
           const chunk = decoder.decode(value);
           const lines = chunk.split('\n');
           
@@ -83,6 +138,12 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
                   content: "An error occurred while generating the response."
                 });
                 break;
+              } else if (data.type === 'action') {
+                onFormSubmit({
+                  status: "action",
+                  content: data.cat,
+                  isStreaming: false,
+                });
               } else if (data.type === 'end') {
                 const endTime = performance.now();
                 const timeInSeconds = ((endTime - startTime) / 1000).toFixed(2);
@@ -104,6 +165,10 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
                 });
               }
             } catch (e) {
+              onFormSubmit({
+                status: "error",
+                content: "An error occurred while generating the response."
+              });
               console.error('Error parsing chunk:', e, 'Raw line:', line);
             }
           }
@@ -111,12 +176,17 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
 
         setSending(false);
       } catch (error) {
-        setSending(false);
-        onFormSubmit({
-          status: "error",
-          content: "An error occurred while generating the response."
-        });
-        console.error('Error:', error);
+        if (error.name === 'AbortError' || (error instanceof DOMException && error.name === 'AbortError')) {
+          onFormSubmit({
+            status: "stopped",
+          });
+        } else {
+          onFormSubmit({
+            status: "error",
+            content: "An error occurred while generating the response."
+          });
+          console.error('Error:', error);
+        }
       }
     };
 
@@ -172,15 +242,7 @@ const InputSection = forwardRef<InputSectionRef, InputSectionProps>(
            />
 
     <div className="flex gap-2 justify-center items-center self-stretch my-auto w-12 min-h-[48px]">
-      {isSending ? (
-<div role="status">
-    <svg aria-hidden="true" className="w-8 h-8 animate-spin fill-[#0B8457]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#fff"/>
-        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-    </svg>
-    <span className="sr-only">Loading...</span>
-</div>
-) : (<img
+      {isSending ? (   <LoadingStopButton onStop={handleStopGeneration} />) : (<img
   loading="lazy"
 
   src="https://cdn.builder.io/api/v1/image/assets/TEMP/7875f712ebcf40ea4d75685127d45e343865e87ac3cb37c5c9a42d582043c46f?placeholderIfAbsent=true&apiKey=645ca4b112e14229a2cd3203c4a5d6b3"
